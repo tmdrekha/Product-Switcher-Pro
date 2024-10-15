@@ -1,0 +1,58 @@
+<form id="form-proswitch" method="post" data-oc-toggle="ajax" data-oc-load="{{ action }}" data-oc-target="#switchproduct">  
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+          <td class="text-start"><a href="{{ sort_name }}"{% if sort == 'name' %} class="{{ order|lower }}"{% endif %}>{{ column_name }}</a></td>
+          <td class="text-start">{{ column_status }}</td>
+          <td class="text-start" style="width:30%;">{{ column_option }}</td>
+          <td class="text-end">{{ column_action }}</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% if switchers %}
+          {% for result in switchers %}
+            <tr>
+              <td class="text-center">{% if result.switch_id in selected %}
+                <input type="checkbox" name="selected[]" value="{{ result.switch_id }}" checked="checked" />
+                {% else %}
+                <input type="checkbox" name="selected[]" value="{{ result.switch_id }}" />
+                {% endif %}</td>
+              <td class="text-start">{{ result.proname }}</td>
+              <td class="text-start">{{ result.status }}</td>
+              <td class="text-start">
+                  {% if result.switchoptions %}
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <td class="text-start">{{ column_name }}</td>
+                      <td class="text-start">{{ column_image }}</td>
+                    </tr>
+                  </thead>  
+                  {% for switchresult in result.switchoptions %}
+                  	<tr>
+                			<td class="text-start">{{ switchresult.prooptname }}</td>
+                			<td class="text-start"><img src="{{ switchresult.image }}" /></td>
+                		</tr>
+                	{% endfor %}
+                </table>
+                {% endif %}
+              </td>
+              <td class="text-end"><a href="{{ result.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+            </tr>
+            {% endfor %}
+          {% else %}
+          <tr>
+            <td class="text-center" colspan="5">{{ text_no_results }}</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</form>
+<div class="row">
+  <div class="col-sm-6 text-start">{{ pagination }}</div>
+  <div class="col-sm-6 text-end">{{ results }}</div>
+</div>
+      

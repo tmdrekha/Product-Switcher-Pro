@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>TMD Product Switcher</name>
+	<id>TMD  Product Switcher</id>
+	<code>TMD  Product Switcher</code>
+	<version>3.x.x</version>
+	<author>TMD(opencartextensions.in)</author>
+	<link>http://opencartextensions.in/</link>
+
+	<!-- Admin XML Code Start Here -->
+	<file path="admin/controller/common/column_left.php">
+		<operation error="skip">
+			<search><![CDATA[// Extension]]></search>
+			<add position="before"><![CDATA[
+			// XML Code Start Here
+			$modulestatus=$this->config->get('module_productasoption_status');
+		
+			if(!empty($modulestatus)){
+
+			$this->load->language('extension/module/productasoption');
+		
+			$productasoptions = array();
+
+			if ($this->user->hasPermission('access', 'extension/module/productasoption')) {
+				$productasoptions[] = array(
+					'name'	   => $this->language->get('text_switchsetting'),
+					'href'     => $this->url->link('extension/module/productasoption', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+
+			if ($this->user->hasPermission('access', 'extension/productasoption')) {
+				$productasoptions[] = array(
+					'name'	   => $this->language->get('text_switch'),
+					'href'     => $this->url->link('extension/productasoption', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+
+			if ($this->user->hasPermission('access', 'extension/unswitchproduct_list')) {
+				$productasoptions[] = array(
+					'name'	   => $this->language->get('text_unswitch'),
+					'href'     => $this->url->link('extension/unswitchproduct_list', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+
+			if ($productasoptions) {
+				$data['menus'][] = array(
+					'id'       => 'menu-faq',
+					'icon'	   => 'fa-toggle-on',
+					'name'	   => $this->language->get('text_switch'),
+					'href'     => '',
+					'children' => $productasoptions
+				);
+			}
+			}
+			// XML Code End Here
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/controller/product/product.php">
+		 <operation error="skip">
+			<search><![CDATA[$data['options'] = array();]]></search>
+			<add position="after"><![CDATA[
+			/// xml 
+			$data['modulestatus'] = $this->config->get('module_productasoption_status');
+			$modulestatus=$this->config->get('module_productasoption_status');
+			if(!empty($modulestatus)){
+			$this->load->model('extension/productasoption');
+			if(!empty($this->model_extension_productasoption->getProductSwitchOptions($this->request->get['product_id']))){
+			foreach ($this->model_extension_productasoption->getProductSwitchOptions($this->request->get['product_id']) as $option) {
+				$product_option_value_data = array();
+
+				foreach ($option['product_option_value'] as $option_value) {
+					
+						if($option_value['product_id']==$this->request->get['product_id']) {
+							$variation_selected = true;
+						} else {
+							$variation_selected = false;
+						}
+
+			              if(!empty($this->config->get('module_productasoption_image_height'))){
+                       $image_hight = $this->config->get('module_productasoption_image_height');
+                     }else{
+                       $image_hight = '50';
+                      }
+
+				            if(!empty($this->config->get('module_productasoption_image_width'))){
+				               $image_width = $this->config->get('module_productasoption_image_width');
+				            }else{
+				               $image_width = '50';
+				            }
+
+				            if(!empty($option_value['image'])){
+				               $image = $option_value['image'];
+				            }else{
+				               $image = 'no_image.png';
+				            }
+
+						$product_option_value_data[] = array(
+							'product_option_value_id' => $option_value['product_option_value_id'],
+							'option_value_id'         => $option_value['option_value_id'],
+							'name'                    => $option_value['name'],
+							'image'                   => $this->model_tool_image->resize($image, $image_width,  $image_hight),
+							'price'                   => '',
+							'price_prefix'            => '',
+							'variation_status'        => $option_value['variation_status'],
+							'link'           		  => $option_value['link'],
+							'variation_selected'      => $variation_selected,
+							'product_id'              => $option_value['product_id'],
+						);
+					
+				}
+
+				$data['options'][] = array(
+					'product_option_id'    => $option['product_option_id'],
+					'product_option_value' => $product_option_value_data,
+					'option_id'            => $option['option_id'],
+					'name'                 => $option['name'],
+					'type'                 => 'tmdswitcher',
+					'value'                => $option['value'],
+					'required'             => $option['required']
+				);
+			  }
+			 }
+			}
+
+			if ($this->request->get['product_id']) {
+				$data['proid'] = $this->request->get['product_id'];
+			}
+			/// xml 
+			]]></add>
+		</operation> 
+	</file>
+
+  <file path="catalog/view/theme/*/template/product/product.twig">
+	 <operation error="skip">
+			<search><![CDATA[{% if option.type == 'radio' %}]]></search>
+			<add position="before"><![CDATA[
+				{% if modulestatus %}
+				{% if option.type == 'tmdswitcher' %}
+<div class="mb-3 {% if option.required %} required {% endif %}">
+  <label class="form-label">{{ option.name }}</label>
+  <div id="input-option{{ option.product_option_id }}" class="flexhorizontal"> {% for option_value in option.product_option_value %}
+    <div class="form-check optionimg {% if proid==option_value.product_id %}active{% endif %}" rel="{{ proid }}">
+      <label>
+      	<div style="display:none;">
+        	<input type="radio" onclick="location='{{ option_value.link }}'" {% if option_value.variation_selected %} checked="checked" {% endif %}/>
+		</div>
+        {% if option_value.image %}<a href="{{ option_value.link }}"> <img src="{{ option_value.image }}" alt="{{ option_value.name }}" title="{{ option_value.name }}"> </a>{% endif %} {% if switcher_displayradio==1 %} <a href="{{ option_value.link }}">{{ option_value.name }}</a>{% endif %}
+        </label>
+    </div>
+    {% endfor %} </div>
+</div>
+{% endif %}
+<style>
+.flexhorizontal{
+	display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.flexhorizontal .form-check.optionimg{
+	width: auto;
+}
+.optionimg{
+	padding:0 5px;
+}
+.optionimg img{
+	border:2px solid transparent;
+	border-radius:50%;
+	-webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}
+.optionimg:hover img,.optionimg img.active,.optionimg.active img{
+	border:2px solid #666;
+	-webkit-shadow: inset 0 0px 3px rgba(149, 90, 42, 0.28), 0px 0px 0px 4px rgba(0, 0, 0, 0.15);
+	-ms-box-shadow: inset 0 0px 3px rgba(149, 90, 42, 0.28), 0px 0px 0px 4px rgba(0, 0, 0, 0.15);
+	box-shadow: inset 0 0px 3px rgba(149, 90, 42, 0.28), 0px 0px 0px 4px rgba(0, 0, 0, 0.15);
+	-webkit-transition: all 0.3s ease 0s;
+	-moz-transition: all 0.3s ease 0s;
+	-o-transition: all 0.3s ease 0s;
+	transition: all 0.3s ease 0s;
+}
+.optionimg a + a{
+	margin-left:5px;
+}
+.optionimg input{
+	margin-right:5px;
+}
+</style>
+            {% endif %}
+			]]></add>
+		</operation> 
+	</file>
+
+</modification>
