@@ -11,32 +11,42 @@ class Productswitcher extends \Opencart\System\Engine\Model {
 	 */
 
 	public function install() {
-		$this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."productswitcher` (
-		  `switch_id` int(11) NOT NULL AUTO_INCREMENT,
-		  `main_product_id` int(11) NOT NULL,
-		  `heading_label` text NOT NULL,
-		  `status` int(11) NOT NULL,
-		  PRIMARY KEY (`switch_id`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
+    // Create main switcher table
+    $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."productswitcher` (
+        `switch_id` int(11) NOT NULL AUTO_INCREMENT,
+        `main_product_id` int(11) NOT NULL,
+        `heading_label` text NOT NULL,
+        `status` int(11) NOT NULL,
+        PRIMARY KEY (`switch_id`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 
-		$this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."productswitcher_product` (
-			`switchproduct_id` int(11) NOT NULL AUTO_INCREMENT,
-			`main_product_id` int(11) NOT NULL,
-			`switch_id` int(11) NOT NULL,
-			`product_id` int(11) NOT NULL,
-			`sort_order` int(11) NOT NULL,
-			`label` text NOT NULL,
-			`image` text NOT NULL,
-			PRIMARY KEY (`switchproduct_id`)
-		  ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
-    
-			$this->db->query("ALTER TABLE ".DB_PREFIX."product ADD IF NOT EXISTS `switch_status` INT(11) NOT NULL AFTER `status`");
-	}
+    // Create switcher-product relationship table
+    $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."productswitcher_product` (
+        `switchproduct_id` int(11) NOT NULL AUTO_INCREMENT,
+        `main_product_id` int(11) NOT NULL,
+        `switch_id` int(11) NOT NULL,
+        `product_id` int(11) NOT NULL,
+        `sort_order` int(11) NOT NULL,
+        `label` text NOT NULL,
+        `image` text NOT NULL,
+        PRIMARY KEY (`switchproduct_id`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    // Check if 'switch_status' column exists in 'product' table before adding it
+      $query = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "product` LIKE 'switch_status'");
+    if (!$query->num_rows) {
+        $this->db->query("ALTER TABLE `" . DB_PREFIX . "product` ADD `switch_status` INT(11) NOT NULL AFTER `status`");
+    }
+}
+
 
 	public function uninstall() {
 		$this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."productswitcher`");
 		$this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."productswitcher_product`");
-        $this->db->query("ALTER TABLE ".DB_PREFIX."product DROP IF EXISTS switch_status");
+        $query = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "product` LIKE 'switch_status'");
+    if ($query->num_rows) {
+      $this->db->query("ALTER TABLE `" . DB_PREFIX . "product` DROP COLUMN `switch_status`");
+   }
 	}
 
 	public function addproductswitcher($data) {

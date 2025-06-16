@@ -1,0 +1,58 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-module" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-save"></i></button>
+        <a href="{{ cancel }}" data-bs-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  {{ getkeyform }}
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+      <div class="card-body">
+        <form id="form-module" action="{{ action }}" method="post" data-oc-toggle="ajax">
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="module_productswitcher_status" id="input-status" class="form-control">
+                {% if module_productswitcher_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="row col-sm-6">
+              <label class="col-sm-4 col-form-label" for="input-height">{{ entry_height }}</label>
+              <div class="col-sm-6">
+                <input type="text" name="module_productswitcher_image_height" value="{{ module_productswitcher_image_height }}" placeholder="{{ entry_height }}" id="input-image_height" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row col-sm-6">
+              <label class="col-sm-4 col-form-label" for="input-width">{{ entry_width }}</label>
+              <div class="col-sm-8">
+                <input type="text" name="module_productswitcher_image_width" value="{{ module_productswitcher_image_width }}" placeholder="{{ entry_width }}" id="input-image_width" class="form-control" />
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

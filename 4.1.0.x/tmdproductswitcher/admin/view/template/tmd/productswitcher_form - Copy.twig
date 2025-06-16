@@ -88,11 +88,11 @@
 												<tr id="time-row{{ option_value_row }}">
 													<td class="text-left">
 														{% if VERSION >= '4.0.2.0' %} 
-									          				<input type="text" name="product_option[{{ option_value_row }}][name]" value="{{ product_option.prooptname }}" placeholder="{{ entry_product }}" id="input-product" data-oc-target="autocomplete-product-{{ option_value_row }}" class="form-control" autocomplete="off"/>
-															<ul id="autocomplete-product-{{ option_value_row }}" class="dropdown-menu"></ul>
+									          				<input type="text" name="product_option[{{ option_value_row }}][name]" value="{{ product_option.prooptname }}" placeholder="{{ entry_product }}" id="input-product" data-oc-target="autocomplete-product" class="form-control" autocomplete="off"/>
+															<ul id="autocomplete-product" class="dropdown-menu"></ul>
 									          			{% else %}
-									          				<input type="text" name="product_option[{{ option_value_row }}][name]" value="{{ product_option.prooptname }}" placeholder="{{ entry_product }}" id="input-product" list="list-product-{{ option_value_row }}" class="form-control"/>
-															<datalist id="list-product-{{ option_value_row }}"></datalist>
+									          				<input type="text" name="product_option[{{ option_value_row }}][name]" value="{{ product_option.prooptname }}" placeholder="{{ entry_product }}" id="input-product" list="list-product" class="form-control"/>
+															<datalist id="list-product"></datalist>
 									          			{% endif %}
 									          			<input type="hidden" name="product_option[{{ option_value_row }}][product_id]" value="{{ product_option.product_id }}" />
 
@@ -191,9 +191,9 @@ function addDeliveryinfo1(product_id) {
 					html += '  <td class="text-left"><input type="hidden" name="product_option[' + option_value_row + '][product_id]" value="'+json['product_id']+'" />';
 
 					{% if VERSION >= '4.0.2.0' %} 
-          				html += '<input type="text" name="product_option[' + option_value_row + '][name]" value="'+json['name']+'" placeholder="{{ entry_product }}" id="input-product' + option_value_row + '" data-oc-target="autocomplete-product-' + option_value_row + '" class="form-control" autocomplete="off"/><ul id="autocomplete-product-' + option_value_row + '" class="dropdown-menu"></ul>';
+          				html += '<input type="text" name="product_option[' + option_value_row + '][name]" value="'+json['name']+'" placeholder="{{ entry_product }}" id="input-product' + option_value_row + '" data-oc-target="autocomplete-product' + option_value_row + '" class="form-control" autocomplete="off"/><ul id="autocomplete-product' + option_value_row + '" class="dropdown-menu"></ul>';
           			{% else %}
-          				html += '<input type="text" name="product_option[' + option_value_row + '][name]" value="'+json['name']+'" placeholder="{{ entry_product }}" id="input-product' + option_value_row + '" list="list-product-' + option_value_row + '" class="form-control"/><datalist id="list-product-' + option_value_row + '"></datalist>';
+          				html += '<input type="text" name="product_option[' + option_value_row + '][name]" value="'+json['name']+'" placeholder="{{ entry_product }}" id="input-product' + option_value_row + '" list="list-product' + option_value_row + '" class="form-control"/><datalist id="list-product' + option_value_row + '"></datalist>';
           			{% endif %}
           			html += '</td>';
 
@@ -233,9 +233,9 @@ function addDeliveryinfo() {
 	html += '  <td class="text-left"><input type="hidden" name="product_option[' + option_value_row + '][product_id]" value="" />';
 
 	{% if VERSION >= '4.0.2.0' %} 
-		html += '<input type="text" name="product_option[' + option_value_row + '][name]" value="" placeholder="{{ entry_product }}" id="input-product' + option_value_row + '" data-oc-target="autocomplete-product-' + option_value_row + '" class="form-control" autocomplete="off"/><ul id="autocomplete-product-' + option_value_row + '" class="dropdown-menu"></ul>';
+		html += '<input type="text" name="product_option[' + option_value_row + '][name]" value="" placeholder="{{ entry_product }}" id="input-product' + option_value_row + '" data-oc-target="autocomplete-product' + option_value_row + '" class="form-control" autocomplete="off"/><ul id="autocomplete-product' + option_value_row + '" class="dropdown-menu"></ul>';
 	{% else %}
-		html += '<input type="text" name="product_option[' + option_value_row + '][name]" value="" placeholder="{{ entry_product }}" id="input-product' + option_value_row + '" list="list-product-' + option_value_row + '" class="form-control"/><datalist id="list-product-' + option_value_row + '"></datalist>';
+		html += '<input type="text" name="product_option[' + option_value_row + '][name]" value="" placeholder="{{ entry_product }}" id="input-product' + option_value_row + '" list="list-product' + option_value_row + '" class="form-control"/><datalist id="list-product' + option_value_row + '"></datalist>';
 	{% endif %}
 	html += '</td>';
 
@@ -288,7 +288,7 @@ function productautocomplete(option_value_row) {
 	});
 }
 
-$('#time tbody tr').each(function(index, element) {
+$('#productswitcher-product tbody tr').each(function(index, element) {
 	productautocomplete(index);
 });
 --></script>

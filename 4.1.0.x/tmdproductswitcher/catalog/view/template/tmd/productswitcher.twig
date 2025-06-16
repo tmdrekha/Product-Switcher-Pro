@@ -1,0 +1,49 @@
+{% if option.type == 'tmdswitcher' %}
+<div class="mb-3 {% if option.required %} required {% endif %}">
+  <label class="form-label">{{ option.name }}</label>
+  <div id="input-option{{ option.product_option_id }}" class="flexhorizontal"> {% for option_value in option.product_option_value %}
+    <div class="form-check optionimg {% if prohref==option_value.link %}active{% endif %}" rel="{{ prohref }}">
+      <label>
+      	<div class="d-none">
+        	<input type="radio" onclick="location='{{ option_value.link }}'" {% if option_value.variation_selected %} checked="checked" {% endif %}/>
+		</div>
+        {% if option_value.image %}<a href="{{ option_value.link }}" title="{{ option_value.name }}"> <img src="{{ option_value.image }}" alt="{{ option_value.name }}" title="{{ option_value.name }}"> </a>{% endif %} {% if switcher_displayradio==1 %} <a href="{{ option_value.link }}">{{ option_value.name }}</a>{% endif %}
+        </label>
+    </div>
+    {% endfor %} </div>
+</div>
+{% endif %}
+<style>
+.flexhorizontal{
+	display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.optionimg{
+	padding:0 5px;
+}
+.optionimg img{
+	border:2px solid transparent;
+	border-radius:50%;
+	-webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}
+.optionimg:hover img,.optionimg img.active,.optionimg.active img{
+	border:2px solid #666;
+	-webkit-shadow: inset 0 0px 3px rgba(149, 90, 42, 0.28), 0px 0px 0px 4px rgba(0, 0, 0, 0.15);
+	-ms-box-shadow: inset 0 0px 3px rgba(149, 90, 42, 0.28), 0px 0px 0px 4px rgba(0, 0, 0, 0.15);
+	box-shadow: inset 0 0px 3px rgba(149, 90, 42, 0.28), 0px 0px 0px 4px rgba(0, 0, 0, 0.15);
+	-webkit-transition: all 0.3s ease 0s;
+	-moz-transition: all 0.3s ease 0s;
+	-o-transition: all 0.3s ease 0s;
+	transition: all 0.3s ease 0s;
+}
+.optionimg a + a{
+	margin-left:5px;
+}
+.optionimg input{
+	margin-right:5px;
+}
+</style>

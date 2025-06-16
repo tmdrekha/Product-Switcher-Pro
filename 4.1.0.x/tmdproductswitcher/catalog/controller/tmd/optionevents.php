@@ -112,10 +112,7 @@ class Optionevents extends \Opencart\System\Engine\Controller {
 
             return file_get_contents($template_file);
         }
-        if ($this->isAdmin()) {
-            trigger_error("Cannot find template file for route '$route'");
-            exit;
-        }
+        
         $dir_template  = DIR_TEMPLATE.'default/template/';
         $template_file = $dir_template.$route.'.twig';
         if (file_exists($template_file) && is_file($template_file)) {
